@@ -7,11 +7,30 @@ class Node {
 }
 
 class Tree {
-    constructor(array){
+    constructor(array){    
         this.array = array;
         this.root = null;
-    }    
+    }
+
+    insert(value) {
+        // traverse through tree, looking for last leaf (while left/right is not null)
+        let tmp = this.root;
+    
+        while(tmp.value !== null){
+            if (value < tmp.value){
+                tmp = tmp.left;
+            }else{
+                tmp = tmp.right;
+            }
+        }
+
+        //set up new leaf node
+        tmp.value = value;
+        tmp.left = new Node;
+        tmp.right = new Node;
+    }
 }
+
 
 
 // [DONE] takes input array
@@ -19,13 +38,22 @@ class Tree {
 // [DONE] removes duplicates
 // [DONE] turns array into balanced binary tree of Node objects
 // [DONE] returns level-0 root node
+// is there any way to put this in the tree class?
+// set up buildTree as a node func
 function buildTree(array){
     //init new root node
     let rootNode = new Node;
 
     //base case
-    if (array.length <= 1){
+    // add new nodes to make insert easier
+    if (array.length === 1){
         rootNode.value = array[0];
+        rootNode.left = new Node;
+        rootNode.right = new Node
+        return rootNode;
+    }
+
+    if (array.length < 1){
         return rootNode;
     }
 
@@ -66,6 +94,9 @@ function buildTree(array){
 
 }
 
+
+
+
 const prettyPrint = (node, prefix = "", isLeft = true) => {
     // console.log(node);
     // console.log(node.right);
@@ -80,17 +111,16 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     if (node.left !== null) {
       prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
     }
-  };
+};
 
 //input array
 let userArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 //create tree
 let userTree = new Tree(userArray);
-// console.log(buildTree(userTree.array));
-// console.log(userTree.array);
 //set tree root to output of build tree (0th level root)
+
 userTree.root = buildTree(userTree.array);
 prettyPrint(userTree.root);
-// console.log(userTree.root);
-// console.log(userTree.root.left);
-// console.log(userTree.root);
+
+// userTree.insert(3650);
+// userTree.insert(3652);
