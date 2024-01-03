@@ -26,14 +26,33 @@ class Tree {
         this.root = null;
     }
 
+    //accepts value and returns node with given value
     find(value){
+        let tmp = this.root;
+        while (!tmp.isLeafNode()){
+            if (value === tmp.value){
+                return tmp;
+            }
+            if (value < tmp.value){
+                tmp = tmp.left;
+            }else if (value > tmp.value){
+                tmp = tmp.right;
+            }
+
+        }
+        console.log('value not found');
+        return null;
+    }
+
+    //returns node and returns parent too (only used within delete fxn)
+    findDelete(value){
         let tmp = this.root;
         let tmpParent = {};
         while (!tmp.isLeafNode()){
             if (value === tmp.value){
                 return [tmp, tmpParent];
             }
-            
+
             tmpParent = tmp;
             if (value < tmp.value){
                 tmp = tmp.left;
@@ -70,15 +89,13 @@ class Tree {
     }
 
     delete(value){
-        let [deleteNode, parentNode] = this.find(value);
-        
-        console.log(deleteNode);
-        console.log(parentNode);
+        let [deleteNode, parentNode] = this.findDelete(value);
 
         //if value is not in tree do nothing
         if (!deleteNode){
             return;
-            //if node to delete is a leaf node, remove from parent
+
+        //if node to delete is a leaf node, remove from parent
         }else if (deleteNode.isLeafNode()){
             console.log('element is leaf node');
             if (parentNode.left === deleteNode){
@@ -86,24 +103,74 @@ class Tree {
             }else{
                 parentNode.right = null;
             }
+
+        //if node has one child, reset pointers so that deleteNode is skipped
         }else if (deleteNode.hasOneChild()){
             console.log('element has one child');
+
             if (parentNode.left === deleteNode){
+                //if there is only one child, only deleteNode.left or right will be truthy
                 parentNode.left = (deleteNode.left || deleteNode.right);                
+            }else if (parentNode.right === deleteNode){
+                parentNode.right = (deleteNode.left || deleteNode.right);                
             }
         }else{
             console.log('element has two children');
             let tmp = deleteNode.right;
+            let tmpParent = {};
+
+            //looking for last left leaf node
+            //this must be next largest value after deleteNode
             while(tmp.left !== null){
+                tmpParent = tmp;
                 tmp = tmp.left;
             }
-            console.log(tmp);
+
+            //switcharoo of pointers
+            //replacement Node's parent to point to replacement's child
+            tmpParent.left = tmp.right;
+            //set replacement children to deleteNode's former children
+            tmp.right = deleteNode.right;
+            tmp.left = deleteNode.left;
+
+            //if deleteNode is root (i.e. parentNode value is undefined)
+            //just set root to tmp
+            if (parentNode.value === undefined){
+                this.root = tmp;
+            //otherwise, set deleteNode's parent pointer to replacement
+            }else if (deleteNode.value < parentNode.value){
+                parentNode.left = tmp;
+            }else{
+                parentNode.right = tmp;
+            }
         }
+    }
 
+    levelOrder(callback){
+        //initialize with tree root already pushed to queue
+        let queue = [this.root];
+        let outputArray = [];
 
+        while (queue.length > 0){
+            if (typeof callback === 'function'){
+                outputArray.push(callback(queue[0].value));
+            }else{
+                outputArray.push(queue[0].value);
+            }
 
+            if (queue[0].left !== null){
+                queue.push(queue[0].left);
+            }
 
+            if (queue[0].right !== null){
+                queue.push(queue[0].right);
+            }
 
+            //remove first element which has already been added to outputArray
+            queue.shift();
+        };
+
+        return outputArray;
 
     }
 }
@@ -190,10 +257,14 @@ let userTree = new Tree(userArray);
 userTree.root = buildTree(userTree.array);
 
 
-userTree.insert(3650);
+// userTree.insert(3650);
 prettyPrint(userTree.root);
 // userTree.insert(3652);
 // userTree.delete(3);
 // console.log(userTree.find(7));
-userTree.delete(8);
-prettyPrint(userTree.root);
+// userTree.delete(4);
+// prettyPrint(userTree.root);
+// console.log(userTree.find(3));
+// userTree.levelOrder();
+
+console.log(userTree.levelOrder((value) => value * 3));
