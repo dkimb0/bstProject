@@ -29,7 +29,7 @@ class Tree {
     //accepts value and returns node with given value
     find(value){
         let tmp = this.root;
-        while (!tmp.isLeafNode()){
+        while (tmp !== null){
             if (value === tmp.value){
                 return tmp;
             }
@@ -68,9 +68,11 @@ class Tree {
 
     insert(value) {
         // traverse through tree, looking for last leaf (while left/right is not null)
+        let tmpParent;
         let tmp = this.root;
     
-        while(!tmp.isLeafNode()){
+        while(tmp !== null){
+            tmpParent = tmp;
             if (value < tmp.value){
                 tmp = tmp.left;
             }else{
@@ -80,10 +82,10 @@ class Tree {
 
 
         //create new node, assign value
-        if (value < tmp.value){
-            tmp.left = new Node(value);
+        if (value < tmpParent.value){
+            tmpParent.left = new Node(value);
         }else{
-            tmp.right = new Node(value);
+            tmpParent.right = new Node(value);
         }
     
     }
@@ -260,6 +262,57 @@ class Tree {
         return outputArray;
     }
 
+    height(node=this.root){
+        if(node === null){
+            return -1;
+        }
+
+        let heightLeft = this.height(node.left);
+        let heightRight = this.height(node.right);
+
+        if (heightLeft > heightRight){
+            return heightLeft + 1;
+        }else{
+            return heightRight + 1;
+        }
+    }
+
+    minHeight(node=this.root){
+        if(node === null){
+            return -1;
+        }
+
+        let heightLeft = this.minHeight(node.left);
+        let heightRight = this.minHeight(node.right);
+
+        if (heightLeft < heightRight){
+            return heightLeft + 1;
+        }else{
+            return heightRight + 1;
+        }
+    }
+
+    depth(node){
+        let tmp = this.root;
+        let count = 0;
+        while (tmp !== null){
+            if (node.value === tmp.value){
+                return count;
+            }
+            if (node.value < tmp.value){
+                tmp = tmp.left;
+                count++;
+            }else if (node.value > tmp.value){
+                tmp = tmp.right;
+                count++;
+            }
+        }
+    }
+
+    isBalanced(){
+        return this.height() - this.minHeight() <= 1;
+    }
+
 }
 
 // sorts and remove dupes of input array
@@ -320,6 +373,11 @@ function buildTree(array){
 
 }
 
+function rebalance(tree){
+    let sortedArray = tree.inOrder();
+    console.log(sortedArray);
+    return buildTree(sortedArray);
+}
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
     // console.log(node);
@@ -337,28 +395,40 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     }
 };
 
+function randArray(index){
+    let randArr = [];
+    for (let i = 0; i < index; i++){
+        randArr.push(Math.floor(100*Math.random()));
+    }
+
+    return randArr;
+}
+
+
+// DRIVER SCRIPT
 //input array
-let userArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+let userArray = randArray(20);
 //create tree
 let userTree = new Tree(userArray);
 //set tree root to output of build tree (0th level root)
 userTree.root = buildTree(userTree.array);
 
+userTree.insert(2)
+userTree.insert(12)
+userTree.insert(24);
 
-// userTree.insert(3650);
 prettyPrint(userTree.root);
-// userTree.insert(3652);
-// userTree.delete(3);
-// console.log(userTree.find(7));
-// userTree.delete(4);
-// prettyPrint(userTree.root);
-// console.log(userTree.find(3));
-// userTree.levelOrder();
+console.log(userTree.isBalanced());
 
-// console.log(userTree.levelOrder((value) => value * 3));
 
-// console.log(userTree.preOrder((value) => { return value*2}));
-// console.log(userTree.inOrder());
-// console.log(userTree.inOrder((val) => {return val * 2}));
-console.log(userTree.preOrder());
-console.log(userTree.postOrder());
+userTree.root = rebalance(userTree);
+prettyPrint(userTree.root);
+
+console.log(userTree.levelOrder())
+
+// console.log(userTree.minHeight(userTree.root));
+
+//driver script:
+
+
+
