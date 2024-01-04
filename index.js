@@ -413,22 +413,29 @@ let userTree = new Tree(userArray);
 //set tree root to output of build tree (0th level root)
 userTree.root = buildTree(userTree.array);
 
-userTree.insert(2)
-userTree.insert(12)
-userTree.insert(24);
-
 prettyPrint(userTree.root);
 console.log(userTree.isBalanced());
+console.log(userTree.levelOrder());
+console.log(userTree.preOrder());
+console.log(userTree.postOrder());
+console.log(userTree.inOrder());
 
+for (let i = 0; i < 10; i++){
+    userTree.insert(Math.floor(Math.random() * 10000)+ 100);
+}
+
+prettyPrint(userTree.root);
+
+console.log(userTree.isBalanced());
 
 userTree.root = rebalance(userTree);
 prettyPrint(userTree.root);
+console.log(userTree.isBalanced());
 
-console.log(userTree.levelOrder())
-
-// console.log(userTree.minHeight(userTree.root));
-
-//driver script:
+console.log(userTree.levelOrder());
+console.log(userTree.preOrder());
+console.log(userTree.postOrder());
+console.log(userTree.inOrder());
 
 
 
