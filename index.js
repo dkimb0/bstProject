@@ -173,6 +173,93 @@ class Tree {
         return outputArray;
 
     }
+
+    preOrder(callback){
+        let outputArray = [];
+        let stack = [this.root];
+        let tmp;
+
+        while(stack.length > 0){
+            tmp = stack[stack.length-1];
+            stack.pop();
+
+            if(typeof callback === 'function'){
+                outputArray.push(callback(tmp.value));                
+            }else{
+                outputArray.push(tmp.value);
+            }
+
+
+            if (tmp.right !== null){
+                stack.push(tmp.right);
+            }
+
+            if (tmp.left !== null){
+                stack.push(tmp.left);
+            }
+        }
+
+        return outputArray;
+
+    }
+
+
+    inOrder(callback){
+        let outputArray = [];
+        let tmp = this.root;
+        let stack = [];
+
+        while(true){
+            if (tmp !== null){
+                stack.push(tmp);
+                tmp = tmp.left;
+
+            }else{
+                if (stack.length === 0){
+                    break;
+                }
+
+                tmp = stack.pop();
+
+                if(typeof callback === 'function'){
+                    outputArray.push(callback(tmp.value));
+                }else{
+                    outputArray.push(tmp.value);
+                }
+                tmp = tmp.right;
+            }
+        }
+
+        return outputArray;
+    }
+
+    postOrder(callback){
+        let outputArray = [];
+        let stack = [this.root];
+        let stackFinal = [];
+        let tmp;
+
+        while(stack.length > 0){
+            tmp = stack[stack.length-1];
+            stack.pop();
+
+            if(typeof callback === 'function'){
+                outputArray.unshift(callback(tmp.value));                
+            }else{
+                outputArray.unshift(tmp.value);
+            }
+
+            if (tmp.left !== null){
+                stack.push(tmp.left);
+            }
+
+            if (tmp.right !== null){
+                stack.push(tmp.right);
+            }
+        }
+        return outputArray;
+    }
+
 }
 
 // sorts and remove dupes of input array
@@ -233,6 +320,7 @@ function buildTree(array){
 
 }
 
+
 const prettyPrint = (node, prefix = "", isLeft = true) => {
     // console.log(node);
     // console.log(node.right);
@@ -267,4 +355,10 @@ prettyPrint(userTree.root);
 // console.log(userTree.find(3));
 // userTree.levelOrder();
 
-console.log(userTree.levelOrder((value) => value * 3));
+// console.log(userTree.levelOrder((value) => value * 3));
+
+// console.log(userTree.preOrder((value) => { return value*2}));
+// console.log(userTree.inOrder());
+// console.log(userTree.inOrder((val) => {return val * 2}));
+console.log(userTree.preOrder());
+console.log(userTree.postOrder());
